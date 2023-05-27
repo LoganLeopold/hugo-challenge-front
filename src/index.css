@@ -11,33 +11,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-.customer, .vehicle {
-  width: 80%;
-  margin: auto;
-}
-
-.field {
-  display: flex;
-  margin-bottom: 5px;
-}
-
-.field *:not(img) {
-  margin-top: 5px;
-  margin-bottom: 5px;
-  margin-right: 5px;
-  font-size: 15px;
-}
- 
-.field img {
-  width: 20px;
-  height: 20px;
-}
-
-.field span {
-  cursor: pointer;
-}
-
-li {
-  list-style: none;
-}

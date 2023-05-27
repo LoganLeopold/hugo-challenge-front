@@ -6,11 +6,13 @@ const Customer = ({customerObject, updateApplication}) => {
 
   const updateCustomerDoc = (keyValue) => {
     const [key, value] = Object.entries(keyValue)[0];
-    updateCustomer((currentDoc) => {
-        currentDoc[key] = value;
-        return currentDoc;
-    });
-    updateApplication(keyValue);
+    if (customerDoc[key] !== value) {
+      updateCustomer((currentDoc) => {
+          currentDoc[key] = value;
+          return currentDoc;
+      });
+      updateApplication(keyValue);
+    }
   }
 
   useEffect(() => {
@@ -20,7 +22,7 @@ const Customer = ({customerObject, updateApplication}) => {
   return (
     <div className='customer'>
       {customerDoc && Object.entries(customerDoc).map( keyValue => 
-        <Field key={keyValue[0]} keyValue={keyValue} updateParentDoc={updateCustomerDoc}/>
+        <Field key={keyValue[0]} keyValue={keyValue} updateParentState={updateCustomerDoc}/>
       )}
     </div>
   )

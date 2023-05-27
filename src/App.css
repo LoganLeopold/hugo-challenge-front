@@ -36,3 +36,62 @@
     transform: rotate(360deg);
   }
 }
+
+a {
+  display: block;
+}
+
+a.all-apps {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+button {
+  margin-bottom: 50px;
+}
+
+.customer, .vehicle {
+  width: 80%;
+  margin: auto;
+}
+
+.field {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.field *:not(img) {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  font-size: 15px;
+}
+ 
+.field img {
+  width: 20px;
+  height: 20px;
+}
+
+.field span {
+  display: flex;
+  cursor: pointer;
+}
+
+h1 {
+  margin-bottom: 0;
+}
+
+h4 {
+  margin-top: 5px;
+}
+
+li {
+  list-style: none;
+}
+
+span {
+  display: block;
+  font-size: 20px;
+}
+
