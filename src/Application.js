@@ -68,7 +68,7 @@ const Application = () => {
         <span>{application.application}</span>
       </h1>
       <h4>Submit At Bottom</h4>
-      <Link to={'/applications'} className='all-apps'>All Applications</Link>
+      <Link to={'/'} className='all-apps'>All Applications</Link>
       <h3>Customer</h3>
       <Customer customerObject={application.customer} updateApplication={updateCustomer}/>
       <div className="vehicles">
