@@ -27,7 +27,7 @@ const App = () => {
   return (
     <div>
       <h1>All Applications</h1>
-      {appList && appList.map( app => <Link to={`/application/${app.application}`}>{app.firstname} {app.lastname}: {app.birthday}</Link>)}
+      {appList && appList.map( (app, i) => <Link key={i} to={`/application/${app.application}`}>{app.firstname} {app.lastname}: {app.birthday}</Link>)}
     </div>
   )
 }

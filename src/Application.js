@@ -2,19 +2,20 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom';
 import './App.css';
 import axios from 'axios'
-import Customer from './Customer.js';
-import Vehicle from './Vehicle';
+import Customer from './Documents/Customer.js';
+import Vehicle from './Documents/Vehicle';
 
 const Application = () => {
-  
+
   const { id } = useParams();
   const [application, setApplication] = useState({ customer: {}, vehicles: [], application: '' });
-  const [hasChanged, setHasChanged] = useState(false);
+  const [isValid, setIsValid] = useState(true);
+  const [errors, setErrors] = useState({});
+  const [price, setPrice] = useState();
 
   const getApp = async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_LOCAL_API_BASE_URL}/application/${id}`);
-      console.log(res);
       setApplication(res.data);
       return res;
     } catch (error) {
@@ -28,39 +29,55 @@ const Application = () => {
     if (hasLoaded.current === false) {
       const app = getApp();
       hasLoaded.current = true;
-    }; 
-  },[]);
+    };
+  }, []);
 
   const updateCustomer = async (keyValue) => {
-    const thisUpdateReq = await sendUpdate({customer: [{customer: application.customer.customer, keyValues: keyValue}]});
     const [key, value] = Object.entries(keyValue)[0];
     setApplication((currApp) => {
       currApp.customer[key] = value;
       return currApp;
     });
-    if (hasChanged !== true) {
-      setHasChanged(true);
-    }
+    const thisUpdateReq = await sendUpdate({ customer: [{ customer: application.customer.customer, keyValues: keyValue }] });
+    console.log("updatedCustomer")
   };
 
   const updateVehicle = async (vin, keyValue) => {
-    const thisUpdateReq = await sendUpdate({vehicles: [{vin: vin, keyValues: keyValue}]});
-    const [key, value] = Object.entries(keyValue)[0]; 
-    const vehicleIndex = application.vehicles.findIndex( (v) => { return v.vin === vin });
+    const [key, value] = Object.entries(keyValue)[0];
+    const vehicleIndex = application.vehicles.findIndex((v) => { return v.vin === vin });
     setApplication((currApp) => {
       currApp.vehicles[vehicleIndex][key] = value;
       return currApp;
     });
-    if (hasChanged !== true) {
-      setHasChanged(true);
-    }
+    const thisUpdateReq = await sendUpdate({ vehicles: [{ vin: vin, keyValues: keyValue }] });
   };
+
+  const submitApplication = async () => {
+    const res = await axios.post(`http://localhost:3001/application/submit`, {});
+    return res;
+  }
 
   const sendUpdate = async (update) => {
     const res = await axios.put(`http://localhost:3001/application/${application.application}`, update);
     return res;
   }
-  
+
+  useEffect(() => {
+    console.log(errors);
+  }, [errors])
+
+  const getFieldErrors = (key, fieldErrors) => {
+    setErrors((currErrors)=>{
+      if (fieldErrors < 1) {
+        delete currErrors[key];
+        console.log(currErrors);
+      } else {
+        currErrors[key] = fieldErrors;
+      }
+      return currErrors;
+    });
+  }
+
   return (
     <div className="App">
       <h1>
@@ -70,16 +87,17 @@ const Application = () => {
       <h4>Submit At Bottom</h4>
       <Link to={'/'} className='all-apps'>All Applications</Link>
       <h3>Customer</h3>
-      <Customer customerObject={application.customer} updateApplication={updateCustomer}/>
+      <Customer customerObject={application.customer} updateApplication={updateCustomer} sendErrorToApp={getFieldErrors} />
       <div className="vehicles">
-        {application.vehicles.map( (v,i) => 
+        {application.vehicles.map((vehicle, i) =>
           <React.Fragment key={i}>
-            <h3>Vehicle {i+1}</h3>
-            <Vehicle key={v.vin} vehicleObject={v} updateApplication={updateVehicle}/>
+            <h3>Vehicle {i + 1}</h3>
+            <Vehicle key={vehicle.vin} vehicleObject={vehicle} updateApplication={updateVehicle} sendErrorToApp={getFieldErrors} />
           </React.Fragment>
         )}
       </div>
-      {hasChanged && <button>Submit Application</button>}
+      {isValid && <button onClick={submitApplication}>Submit Application</button>}
+      {price && <p>Price: {price}</p>}
     </div>
   );
 }

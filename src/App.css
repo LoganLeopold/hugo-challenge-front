@@ -58,6 +58,7 @@ button {
 
 .field {
   display: flex;
+  flex-direction: column;
   margin-bottom: 5px;
 }
 
@@ -78,16 +79,21 @@ button {
   cursor: pointer;
 }
 
+.fieldErrorList {
+  color: red;
+  text-align: left;
+}
+
+.fieldInfo {
+  display: flex;
+}
+
 h1 {
   margin-bottom: 0;
 }
 
 h4 {
   margin-top: 5px;
-}
-
-li {
-  list-style: none;
 }
 
 span {
