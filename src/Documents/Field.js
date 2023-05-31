@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Field = ({keyValue, updateParentDocument, validation, fieldLengths, sendErrorToApp, docType}) => {
+const Field = ({keyValue, updateParentDocument, validation, fieldLengths, sendErrorToApp, document}) => {
   const [key, value] = keyValue;
   const [editing, setEdit] = useState(false);
   const [fieldValue, setVFieldalue] = useState(value);
