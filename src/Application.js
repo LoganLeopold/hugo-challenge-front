@@ -38,7 +38,7 @@ const Application = () => {
       currApp.customer[key] = value;
       return currApp;
     });
-    const thisUpdateReq = await sendUpdate({ customer: [{ customer: application.customer.customer, keyValues: keyValue }] });
+    // const thisUpdateReq = await sendUpdate({ customer: [{ customer: application.customer.customer, keyValues: keyValue }] });
     console.log("updatedCustomer")
   };
 
@@ -49,16 +49,11 @@ const Application = () => {
       currApp.vehicles[vehicleIndex][key] = value;
       return currApp;
     });
-    const thisUpdateReq = await sendUpdate({ vehicles: [{ vin: vin, keyValues: keyValue }] });
+    // const thisUpdateReq = await sendUpdate({ vehicles: [{ vin: vin, keyValues: keyValue }] });
   };
 
   const submitApplication = async () => {
     const res = await axios.post(`http://localhost:3001/application/submit`, {});
-    return res;
-  }
-
-  const sendUpdate = async (update) => {
-    const res = await axios.put(`http://localhost:3001/application/${application.application}`, update);
     return res;
   }
 

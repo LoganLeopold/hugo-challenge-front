@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-const Field = ({keyValue, updateParentDocument, validation, fieldLengths, sendErrorToApp}) => {
+const Field = ({keyValue, updateParentDocument, validation, fieldLengths, sendErrorToApp, docType}) => {
   const [key, value] = keyValue;
   const [editing, setEdit] = useState(false);
   const [fieldValue, setVFieldalue] = useState(value);
   const [errors, setErrors] = useState([])
 
-  const clickEvent = () => {
+  const clickEvent = async () => {
+    const res = await sendUpdate({ [docType]: [{ customer: application.customer.customer, keyValues: keyValue }] });
     updateParentDocument({[key]: fieldValue});
   };
 
@@ -44,6 +46,11 @@ const Field = ({keyValue, updateParentDocument, validation, fieldLengths, sendEr
       sendErrorToApp(key, currentErrors.length)
     };
   } 
+
+  const sendUpdate = async (update) => {
+    const res = await axios.put(`http://localhost:3001/application/${application.application}`, update);
+    return res;
+  }
 
   return (
     <div className='field'>

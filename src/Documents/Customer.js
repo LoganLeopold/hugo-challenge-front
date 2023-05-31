@@ -48,6 +48,10 @@ const Customer = ({customerObject, updateApplication, sendErrorToApp}) => {
           return (
             <Field 
               key={keyValue[0]} 
+              document={{
+                docType: 'customer',
+                doc: customerDoc
+              }}
               keyValue={keyValue} 
               updateParentDocument={updateCustomerDoc} 
               fieldLengths={fieldLengths}
