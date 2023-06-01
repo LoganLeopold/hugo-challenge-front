@@ -2,24 +2,24 @@ import React, { useEffect, useState } from 'react';
 import Field from './Field';
 import { validationMethodMap as validation } from "../validationUtils";
 
-const Customer = ({customerObject, updateApplication, sendErrorToApp}) => {
+const Customer = ({ customerObject }) => {
   const [customerDoc, updateCustomer] = useState();
-  const [customerErrors, setCustomerErrors] = useState({});
+  // const [customerErrors, setCustomerErrors] = useState({});
   
   useEffect(() => {
     updateCustomer(customerObject)
   },[customerObject]);
 
-  const reportFieldError = (key, errorCount) => {
-    setCustomerErrors((currErrors) => {
-      if (errorCount > 0) {
-        currErrors[key] = errorCount;
-      } else {
-        delete currErrors[key];
-      }
-      return currErrors
-    })
-  }
+  // const reportFieldError = (key, errorCount) => {
+  //   setCustomerErrors((currErrors) => {
+  //     if (errorCount > 0) {
+  //       currErrors[key] = errorCount;
+  //     } else {
+  //       delete currErrors[key];
+  //     }
+  //     return currErrors
+  //   })
+  // }
 
   const fieldLengths = {
     lastname: 255,
@@ -35,34 +35,32 @@ const Customer = ({customerObject, updateApplication, sendErrorToApp}) => {
     if (customerDoc[key] !== value) {
       updateCustomer((currentDoc) => {
           currentDoc[key] = value;
+          console.log(currentDoc)
           return currentDoc;
       });
-      updateApplication(keyValue);
+      // updateApplication(keyValue);
     }
   }
 
   return (
     <div className='customer'>
       {customerDoc && Object.entries(customerDoc).map( keyValue => {
-        if (keyValue[0] != "application" && keyValue[0] != "customer") {
+        if (keyValue[0] !== "application" && keyValue[0] !== "customer") {
           return (
             <Field 
               key={keyValue[0]} 
-              document={{
-                docType: 'customer',
-                doc: customerDoc
-              }}
-              keyValue={keyValue} 
-              updateParentDocument={updateCustomerDoc} 
+              docType={'customer'}
+              documentId={customerDoc.customer} 
+              keyValue={keyValue}
               fieldLengths={fieldLengths}
-              errorReport={reportFieldError}
               validation={validation[keyValue[0]] ? validation[keyValue[0]] : validation['varChar']}
-              sendErrorToApp={sendErrorToApp}
+              updateParentDoc={updateCustomerDoc}
             />
           )
+        } else {
+          return undefined
         }
-      }
-      )}
+      })}
     </div>
   )
 };

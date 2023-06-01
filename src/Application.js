@@ -31,27 +31,7 @@ const Application = () => {
       hasLoaded.current = true;
     };
   }, []);
-
-  const updateCustomer = async (keyValue) => {
-    const [key, value] = Object.entries(keyValue)[0];
-    setApplication((currApp) => {
-      currApp.customer[key] = value;
-      return currApp;
-    });
-    // const thisUpdateReq = await sendUpdate({ customer: [{ customer: application.customer.customer, keyValues: keyValue }] });
-    console.log("updatedCustomer")
-  };
-
-  const updateVehicle = async (vin, keyValue) => {
-    const [key, value] = Object.entries(keyValue)[0];
-    const vehicleIndex = application.vehicles.findIndex((v) => { return v.vin === vin });
-    setApplication((currApp) => {
-      currApp.vehicles[vehicleIndex][key] = value;
-      return currApp;
-    });
-    // const thisUpdateReq = await sendUpdate({ vehicles: [{ vin: vin, keyValues: keyValue }] });
-  };
-
+  
   const submitApplication = async () => {
     const res = await axios.post(`http://localhost:3001/application/submit`, {});
     return res;
@@ -82,15 +62,24 @@ const Application = () => {
       <h4>Submit At Bottom</h4>
       <Link to={'/'} className='all-apps'>All Applications</Link>
       <h3>Customer</h3>
-      <Customer customerObject={application.customer} updateApplication={updateCustomer} sendErrorToApp={getFieldErrors} />
-      <div className="vehicles">
+      <Customer 
+        customerObject={application.customer} 
+        // updateApplication={updateCustomer} 
+        sendErrorToApp={getFieldErrors} 
+      />
+      {/* <div className="vehicles">
         {application.vehicles.map((vehicle, i) =>
           <React.Fragment key={i}>
             <h3>Vehicle {i + 1}</h3>
-            <Vehicle key={vehicle.vin} vehicleObject={vehicle} updateApplication={updateVehicle} sendErrorToApp={getFieldErrors} />
+            <Vehicle 
+              key={vehicle.vin} 
+              vehicleObject={vehicle} 
+              // updateApplication={updateVehicle} 
+              sendErrorToApp={getFieldErrors} 
+            />
           </React.Fragment>
         )}
-      </div>
+      </div> */}
       {isValid && <button onClick={submitApplication}>Submit Application</button>}
       {price && <p>Price: {price}</p>}
     </div>
