@@ -8,9 +8,9 @@ import Vehicle from './Documents/Vehicle';
 const Application = () => {
 
   const { id } = useParams();
-  const [application, setApplication] = useState({ customer: {}, vehicles: [], application: '' });
-  const [isValid, setIsValid] = useState(true);
+  const [application, setApplication] = useState({ customer: {}, vehicles: {}, application: '' });
   const [errors, setErrors] = useState({});
+  const [isValid, setIsValid] = useState(true);
   const [price, setPrice] = useState();
 
   const getApp = async () => {
@@ -37,21 +37,35 @@ const Application = () => {
     return res;
   }
 
-  useEffect(() => {
-    console.log(errors);
-  }, [errors])
-
-  const getFieldErrors = (key, fieldErrors) => {
-    setErrors((currErrors)=>{
-      if (fieldErrors < 1) {
-        delete currErrors[key];
-        console.log(currErrors);
-      } else {
-        currErrors[key] = fieldErrors;
-      }
-      return currErrors;
-    });
+  const updateApplication = (docType, fieldUpdate, id) => {
+    // console.log("fieldUpdate", fieldUpdate)
+    const [key, value] = Object.entries(fieldUpdate)[0]
+    if (docType ==="customer") {
+      setApplication((currApp) => {
+        currApp['customer'][key] = value
+        return currApp
+      })
+    } 
+    else {
+      setApplication((currApp) => {
+        currApp.vehicles[id][key] = value
+        return currApp;
+      })
+    }
   }
+
+  const updateApplicationErrors = (key, count) => {
+    if (errors[key] != count) {
+      setErrors((errorsObject) => {
+        errorsObject[key] = count   
+        return errorsObject;
+      })
+    }   
+  }
+
+  // useEffect(() => {
+  //   console.log(application)
+  // }, [application])
 
   return (
     <div className="App">
@@ -64,24 +78,25 @@ const Application = () => {
       <h3>Customer</h3>
       <Customer 
         customerObject={application.customer} 
-        // updateApplication={updateCustomer} 
-        sendErrorToApp={getFieldErrors} 
+        updateApplication={updateApplication} 
+        updateApplicationErrors={updateApplicationErrors}
       />
-      {/* <div className="vehicles">
-        {application.vehicles.map((vehicle, i) =>
+      <div className="vehicles">
+        {application.vehicles && Object.values(application.vehicles).map((vehicle, i) =>
           <React.Fragment key={i}>
             <h3>Vehicle {i + 1}</h3>
             <Vehicle 
               key={vehicle.vin} 
               vehicleObject={vehicle} 
-              // updateApplication={updateVehicle} 
-              sendErrorToApp={getFieldErrors} 
+              updateApplication={updateApplication} 
+              updateApplicationErrors={updateApplicationErrors}
             />
           </React.Fragment>
         )}
-      </div> */}
+      </div>
       {isValid && <button onClick={submitApplication}>Submit Application</button>}
       {price && <p>Price: {price}</p>}
+      {/* <button onClick={onSubmitData}>TEST SUBMIT ACTION</button> */}
     </div>
   );
 }

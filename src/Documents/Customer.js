@@ -2,24 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Field from './Field';
 import { validationMethodMap as validation } from "../validationUtils";
 
-const Customer = ({ customerObject }) => {
-  const [customerDoc, updateCustomer] = useState();
-  // const [customerErrors, setCustomerErrors] = useState({});
+const Customer = ({ customerObject, updateApplication, updateApplicationErrors }) => {
+  const [customerDoc, updateCustomer] = useState({});
+  const [errors, setErrorObject] = useState({})
   
+  // establishing
   useEffect(() => {
     updateCustomer(customerObject)
   },[customerObject]);
-
-  // const reportFieldError = (key, errorCount) => {
-  //   setCustomerErrors((currErrors) => {
-  //     if (errorCount > 0) {
-  //       currErrors[key] = errorCount;
-  //     } else {
-  //       delete currErrors[key];
-  //     }
-  //     return currErrors
-  //   })
-  // }
 
   const fieldLengths = {
     lastname: 255,
@@ -30,15 +20,18 @@ const Customer = ({ customerObject }) => {
     state: 75,
   }
 
-  const updateCustomerDoc = (keyValue) => {
-    const [key, value] = Object.entries(keyValue)[0];
-    if (customerDoc[key] !== value) {
-      updateCustomer((currentDoc) => {
-          currentDoc[key] = value;
-          console.log(currentDoc)
-          return currentDoc;
+  useEffect(() => {
+    updateApplicationErrors('customer', errors)
+  }, [errors])
+
+  const updateCustomerErrors = (field, count) => {
+    if (errors && count != errors[field]) {
+      setErrorObject((currErrors) => {
+        if (currErrors) {
+          currErrors[field] = count;
+          return currErrors;
+        }
       });
-      // updateApplication(keyValue);
     }
   }
 
@@ -54,14 +47,15 @@ const Customer = ({ customerObject }) => {
               keyValue={keyValue}
               fieldLengths={fieldLengths}
               validation={validation[keyValue[0]] ? validation[keyValue[0]] : validation['varChar']}
-              updateParentDoc={updateCustomerDoc}
+              updateApplication={updateApplication}
+              updateDocumentErrors={updateCustomerErrors}
             />
           )
         } else {
           return undefined
         }
       })}
-    </div>
+  </div>
   )
 };
 

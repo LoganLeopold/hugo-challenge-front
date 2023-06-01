@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Field = ({ docType, documentId, keyValue, fieldLengths, validation, updateParentDoc }) => {
+const Field = ({ docType, documentId, keyValue, fieldLengths, validation, updateApplication, updateDocumentErrors }) => {
   const [key, value] = keyValue;
   const [editing, setEdit] = useState(false);
   const [fieldValue, setVFieldalue] = useState();
-  const [errors, setErrors] = useState([])
+  const [errors, setErrors] = useState([]);
+  const [dbMock, setDbMock] = useState();
   
   // for initial load
   useEffect(() => {
-    setVFieldalue(keyValue[1]);
-  }, [keyValue])
-
-  const clickEvent = async () => {
-    if (errors.length <= 0) {
-      const res = await sendUpdate({[key]: fieldValue});
-    }
-  };
+    setVFieldalue(value);
+    setDbMock(value);
+  }, [value])
 
   const handleChange = (e) => { 
-    setVFieldalue(e.target.value);
+    setVFieldalue((e.target.value));
   }
 
   const toggleEdit = () => {
@@ -27,8 +23,14 @@ const Field = ({ docType, documentId, keyValue, fieldLengths, validation, update
   }
 
   useEffect(()=>{
-    if (validation) {
-      validation.name === 'varChar' ? validateField(fieldValue) : validateField(fieldValue);
+    if (errors && errors.length > 0) {
+      updateDocumentErrors(key, errors.length)
+    }
+  }, [errors])
+  
+  useEffect(()=>{
+    if (validation && fieldValue) {
+      validateField(fieldValue);
     }
   }, [fieldValue]);
 
@@ -47,8 +49,23 @@ const Field = ({ docType, documentId, keyValue, fieldLengths, validation, update
     };
   } 
 
+  const clickEvent = async (e) => {
+    const sendError = "*** NOT SUBMITTED *** either errors on field or data is the same.";
+    if (errors.length <= 0 && fieldValue != dbMock) {
+      const res = await sendUpdate({[key]: fieldValue});
+      if (res.data) {
+        setDbMock(Object.values(res.data)[0]);
+        updateApplication(docType, res.data, documentId);
+      }
+    } else {
+      setErrors((currErrors) => {
+        if (!currErrors.includes(sendError)) currErrors.push(sendError);
+        return currErrors;
+      })
+    }
+  };
+
   const sendUpdate = async (update) => {
-    updateParentDoc(update);
     const res = await axios.put(`http://localhost:3001/${docType}/${documentId}`, update);
     return res;
   }
@@ -65,7 +82,10 @@ const Field = ({ docType, documentId, keyValue, fieldLengths, validation, update
           </span>
         )}
         {editing && <input value={fieldValue} onChange={handleChange} maxLength={fieldLengths[key]} onBlur={()=>validateField(fieldValue)}/>}
-        {editing && <span onClick={(e)=>{ toggleEdit(e); clickEvent(); }}>Done (submits any change)</span>}
+        {editing && <span onClick={(e)=>{ 
+          toggleEdit(e);
+          clickEvent(); 
+        }}>Done (submits any change)</span>}
       </div>
       {errors && errors.length > 0 && (
         <ul className='fieldErrorList'>
