@@ -4,13 +4,14 @@ import './App.css';
 import axios from 'axios'
 import Customer from './Documents/Customer.js';
 import Vehicle from './Documents/Vehicle';
+import NewVehicle from './NewVehicle';
 
 const Application = () => {
 
   const { id } = useParams();
-  const [application, setApplication] = useState({ customer: {}, vehicles: [], application: '' });
-  const [isValid, setIsValid] = useState(true);
+  const [application, setApplication] = useState({ customer: {}, vehicles: {}, application: '' });
   const [errors, setErrors] = useState({});
+  const [isValid, setIsValid] = useState(true);
   const [price, setPrice] = useState();
 
   const getApp = async () => {
@@ -31,52 +32,102 @@ const Application = () => {
       hasLoaded.current = true;
     };
   }, []);
-
-  const updateCustomer = async (keyValue) => {
-    const [key, value] = Object.entries(keyValue)[0];
-    setApplication((currApp) => {
-      currApp.customer[key] = value;
-      return currApp;
-    });
-    const thisUpdateReq = await sendUpdate({ customer: [{ customer: application.customer.customer, keyValues: keyValue }] });
-    console.log("updatedCustomer")
-  };
-
-  const updateVehicle = async (vin, keyValue) => {
-    const [key, value] = Object.entries(keyValue)[0];
-    const vehicleIndex = application.vehicles.findIndex((v) => { return v.vin === vin });
-    setApplication((currApp) => {
-      currApp.vehicles[vehicleIndex][key] = value;
-      return currApp;
-    });
-    const thisUpdateReq = await sendUpdate({ vehicles: [{ vin: vin, keyValues: keyValue }] });
-  };
-
-  const submitApplication = async () => {
-    const res = await axios.post(`http://localhost:3001/application/submit`, {});
-    return res;
+  
+  const updateApplication = (docType, fieldUpdate, id) => {
+    const [key, value] = Object.entries(fieldUpdate)[0]
+    if (docType === "customer") {
+      setApplication((currApp) => { 
+        return {
+          ...currApp,
+          customer: {
+            ...currApp.customer,
+            [key]: value,
+          }
+        }
+      })
+    } 
+    else {
+      setApplication((currApp) => {
+        return {
+          ...currApp,
+          vehicles: {
+            ...currApp.vehicles,
+            [id]: {
+              ...currApp.vehicles[id],
+              [key]: value
+            }
+          }
+        }
+      })
+    }
   }
 
-  const sendUpdate = async (update) => {
-    const res = await axios.put(`http://localhost:3001/application/${application.application}`, update);
-    return res;
+  const removeVehicle = (vin) => {
+    setApplication((currApp) => {
+      const newApp = {
+        ...currApp
+      }
+      delete newApp.vehicles[vin]
+      return newApp;
+    })
+  }
+
+  const updateApplicationErrors = (key, count) => {
+    console.log("updateApplicationErrors causes error changes")
+    if (errors && errors[key] !== count) {
+      setErrors((errorsObject) => {
+        const newErrorObject = {
+          ...errorsObject
+        }
+        if (count === 0) { 
+          delete newErrorObject[key] 
+        } else {
+          newErrorObject[key] = count
+        }
+        return newErrorObject
+      }) 
+    }
+  }
+
+  const validateApplication = () => {
+    console.log("validateApp causes setIsValid")
+    let check = true;
+    if (errors) {
+      for (let i = 0; i < Object.keys(errors).length; i++) {
+        const [field, docErrors] = Object.entries(errors)[i];
+        if (docErrors > 0) {
+          check = false
+          return check;
+        }
+      }
+    }
+    console.log("test loop return", check);
+    return check;
+  }
+
+  const submitApplication = async () => {
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_LOCAL_API_BASE_URL}/application/submit`, {
+        customer: application.customer,
+        vehicles: Object.values(application.vehicles)
+      });
+      if (res.data) {
+        setPrice(res.data.price)
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   useEffect(() => {
-    console.log(errors);
+    console.log("errors useEffect causes validateApplication");
+    const check = validateApplication();
+    setIsValid(check);
   }, [errors])
 
-  const getFieldErrors = (key, fieldErrors) => {
-    setErrors((currErrors)=>{
-      if (fieldErrors < 1) {
-        delete currErrors[key];
-        console.log(currErrors);
-      } else {
-        currErrors[key] = fieldErrors;
-      }
-      return currErrors;
-    });
-  }
+  useEffect(()=>{
+    console.log("isValid: " + isValid)
+  }, [isValid]);
 
   return (
     <div className="App">
@@ -87,17 +138,30 @@ const Application = () => {
       <h4>Submit At Bottom</h4>
       <Link to={'/'} className='all-apps'>All Applications</Link>
       <h3>Customer</h3>
-      <Customer customerObject={application.customer} updateApplication={updateCustomer} sendErrorToApp={getFieldErrors} />
+      <Customer 
+        customerObject={application.customer} 
+        updateApplication={updateApplication} 
+        updateApplicationErrors={updateApplicationErrors}
+      />
       <div className="vehicles">
-        {application.vehicles.map((vehicle, i) =>
+        {application.vehicles && Object.values(application.vehicles).map((vehicle, i) =>
           <React.Fragment key={i}>
             <h3>Vehicle {i + 1}</h3>
-            <Vehicle key={vehicle.vin} vehicleObject={vehicle} updateApplication={updateVehicle} sendErrorToApp={getFieldErrors} />
+            <Vehicle 
+              key={vehicle.vin} 
+              vehicleObject={vehicle} 
+              updateApplication={updateApplication} 
+              updateApplicationErrors={updateApplicationErrors}
+              removeVehicle={removeVehicle}
+            />
           </React.Fragment>
         )}
+        {/* {Object.keys(application.vehicles).length > 3 && <NewVehicle application={application}/>} */}
       </div>
-      {isValid && <button onClick={submitApplication}>Submit Application</button>}
-      {price && <p>Price: {price}</p>}
+      <div className='submit-price'>
+        {<button onClick={submitApplication} disabled={!isValid}>Submit Application{!isValid && <span>Fix errors on form!</span>}</button>}
+        {price && <p>Price: {price}</p>}
+      </div>
     </div>
   );
 }

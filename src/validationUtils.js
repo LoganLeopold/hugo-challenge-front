@@ -30,7 +30,9 @@ export const validationMethodMap ={
   },
 
   varChar: (value, maxLength) => {
-    return value.length < maxLength ? [] : [`Needs to be less than ${maxLength}`];
+    if (value) {
+      return value.length < maxLength ? [] : [`Needs to be less than ${maxLength}`];
+    }
   },
   
   year: (year) => {
@@ -43,8 +45,9 @@ export const validationMethodMap ={
 
   zipcode: (zipcode) => {
     let errors = [];
+    const exp = new RegExp(/^\d{5}$/g)
     if (isNaN(zipcode)) errors.push("Zipcode must be a number.");
-    if (zipcode > 99999) errors.push("Zipcode must be a valid zipcode in five-number format.");
+    if (exp.test(zipcode) === false) errors.push("Zipcode must be a valid zipcode in five-number format.");
     return errors;
   }
 }

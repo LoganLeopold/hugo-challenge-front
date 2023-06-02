@@ -101,3 +101,14 @@ span {
   font-size: 20px;
 }
 
+.submit-price {
+  display: flex;
+  margin: auto;
+  width: 20%
+}
+
+.submit-price p, .submit-price button {
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+
