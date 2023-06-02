@@ -52,10 +52,14 @@ const Field = ({ docType, documentId, keyValue, fieldLengths, validation, update
   const clickEvent = async (e) => {
     const sendError = "*** NOT SUBMITTED *** Errors on the field.";
     if (errors.length <= 0 && fieldValue != dbMock) {
-      const res = await sendUpdate({[key]: fieldValue});
-      if (res.data) {
-        setDbMock(Object.values(res.data)[0]);
-        updateApplication(docType, res.data, documentId);
+      try {
+        const res = await sendUpdate({[key]: fieldValue});
+        if (res.data) {
+          setDbMock(Object.values(res.data)[0]);
+          updateApplication(docType, res.data, documentId);
+        }
+      } catch (error) {
+        console.log(error);
       }
     } else if (fieldValue != dbMock) {
       setErrors((currErrors) => {
@@ -66,8 +70,12 @@ const Field = ({ docType, documentId, keyValue, fieldLengths, validation, update
   };
 
   const sendUpdate = async (update) => {
-    const res = await axios.put(`http://localhost:3001/${docType}/${documentId}`, update);
-    return res;
+    try {
+      const res = await axios.put(`${process.env.REACT_APP_LOCAL_API_BASE_URL}/${docType}/${documentId}`, update);
+      return res;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (

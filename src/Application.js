@@ -4,6 +4,7 @@ import './App.css';
 import axios from 'axios'
 import Customer from './Documents/Customer.js';
 import Vehicle from './Documents/Vehicle';
+import NewVehicle from './NewVehicle';
 
 const Application = () => {
 
@@ -61,6 +62,16 @@ const Application = () => {
     }
   }
 
+  const removeVehicle = (vin) => {
+    setApplication((currApp) => {
+      const newApp = {
+        ...currApp
+      }
+      delete newApp.vehicles[vin]
+      return newApp;
+    })
+  }
+
   const updateApplicationErrors = (key, count) => {
     console.log("updateApplicationErrors causes error changes")
     if (errors && errors[key] !== count) {
@@ -95,12 +106,16 @@ const Application = () => {
   }
 
   const submitApplication = async () => {
-    const res = await axios.post(`http://localhost:3001/application/submit`, {
-      customer: application.customer,
-      vehicles: Object.values(application.vehicles)
-    });
-    if (res.data) {
-      setPrice(res.data.price)
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_LOCAL_API_BASE_URL}/application/submit`, {
+        customer: application.customer,
+        vehicles: Object.values(application.vehicles)
+      });
+      if (res.data) {
+        setPrice(res.data.price)
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -137,9 +152,11 @@ const Application = () => {
               vehicleObject={vehicle} 
               updateApplication={updateApplication} 
               updateApplicationErrors={updateApplicationErrors}
+              removeVehicle={removeVehicle}
             />
           </React.Fragment>
         )}
+        {/* {Object.keys(application.vehicles).length > 3 && <NewVehicle application={application}/>} */}
       </div>
       <div className='submit-price'>
         {<button onClick={submitApplication} disabled={!isValid}>Submit Application{!isValid && <span>Fix errors on form!</span>}</button>}
