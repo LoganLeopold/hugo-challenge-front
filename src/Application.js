@@ -155,15 +155,6 @@ const Application = () => {
     setIsValid(check);
   }, [errors])
 
-  // const newVehicleDefaults = {
-  //   application: application.application,
-  //   cusotmer: application.customer,
-  //   vin: '',
-  //   year: '',
-  //   make: '',
-  //   model: '',
-  // }
-
   return (
     <div className="App">
       <h1>

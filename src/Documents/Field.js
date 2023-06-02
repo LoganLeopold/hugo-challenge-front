@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const Field = ({ docType, documentId, keyValue, fieldLengths, validation, updateApplication, updateDocumentErrors }) => {
-  let [key, value] = keyValue;
+  const [key, value] = keyValue;
   const [editing, setEdit] = useState(false);
   const [fieldValue, setVFieldalue] = useState();
   const [errors, setErrors] = useState([]);
