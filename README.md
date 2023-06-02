@@ -2,7 +2,13 @@
 
 This base of this project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) for context.
 
-A git clone of this repo > cd into the project folder > and an npm install should do it for running locally. BUT, an environment variable is needed. Setup below.
+A git clone of this repo > cd into the project folder > and an npm install should do it for running locally. BUT, an environment variable is needed. Setup below in Environment section.
+
+## Usage Notes
+
+Just a couple points:
+- When you boot up the backend, it will seed the database for you (per instructions in that repo). 
+- I did create a remove vehicle button but haven't gotten to the add yet, so once you remove a vehicle, it's gone. You can always easily add back in one to Postgres with a query or a GUI (I used Postico for my GUI).
 
 ## Environment
 
