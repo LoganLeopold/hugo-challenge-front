@@ -23,7 +23,6 @@ const Vehicle = ({ vehicleObject, updateApplication, updateApplicationErrors }) 
   }, [errors, vehicleDoc])
 
   const updateVehicleErrors = (field, count) => {
-    console.log(field, count)
     if (errors && count != errors[field]) {
       setErrorObject((currErrors) => {
         if (currErrors) {
@@ -41,7 +40,7 @@ const Vehicle = ({ vehicleObject, updateApplication, updateApplicationErrors }) 
           return (
             <Field 
             key={keyValue[0]} 
-            docType={'customer'}
+            docType={'vehicle'}
             documentId={vehicleDoc.vin} 
             keyValue={keyValue}
             fieldLengths={fieldLengths}
