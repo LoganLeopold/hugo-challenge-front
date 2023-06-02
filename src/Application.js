@@ -95,8 +95,13 @@ const Application = () => {
   }
 
   const submitApplication = async () => {
-    const res = await axios.post(`http://localhost:3001/application/submit`, {});
-    return res;
+    const res = await axios.post(`http://localhost:3001/application/submit`, {
+      customer: application.customer,
+      vehicles: Object.values(application.vehicles)
+    });
+    if (res.data) {
+      setPrice(res.data.price)
+    }
   }
 
   useEffect(() => {
@@ -136,9 +141,10 @@ const Application = () => {
           </React.Fragment>
         )}
       </div>
-      {isValid && <button onClick={submitApplication}>Submit Application</button>}
-      {price && <p>Price: {price}</p>}
-      {/* <button onClick={onSubmitData}>TEST SUBMIT ACTION</button> */}
+      <div className='submit-price'>
+        {<button onClick={submitApplication} disabled={!isValid}>Submit Application{!isValid && <span>Fix errors on form!</span>}</button>}
+        {price && <p>Price: {price}</p>}
+      </div>
     </div>
   );
 }
