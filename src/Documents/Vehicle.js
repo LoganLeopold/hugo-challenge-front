@@ -39,7 +39,6 @@ const Vehicle = ({ vehicleObject, updateApplication, updateApplicationErrors, re
   const removeThisVehicle = async () => {
     try {
       const res = await axios.delete(`${process.env.REACT_APP_LOCAL_API_BASE_URL}/vehicle/${vehicleDoc.vin}`)
-      console.log(res);
       if (res.data === "success") {
         removeVehicle(vehicleDoc.vin);
       }

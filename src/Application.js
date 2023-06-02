@@ -73,7 +73,6 @@ const Application = () => {
   }
 
   const updateApplicationErrors = (key, count) => {
-    console.log("updateApplicationErrors causes error changes")
     if (errors && errors[key] !== count) {
       setErrors((errorsObject) => {
         const newErrorObject = {
@@ -90,7 +89,6 @@ const Application = () => {
   }
 
   const validateApplication = () => {
-    console.log("validateApp causes setIsValid")
     let check = true;
     if (errors) {
       for (let i = 0; i < Object.keys(errors).length; i++) {
@@ -101,7 +99,6 @@ const Application = () => {
         }
       }
     }
-    console.log("test loop return", check);
     return check;
   }
 
@@ -120,14 +117,9 @@ const Application = () => {
   }
 
   useEffect(() => {
-    console.log("errors useEffect causes validateApplication");
     const check = validateApplication();
     setIsValid(check);
   }, [errors])
-
-  useEffect(()=>{
-    console.log("isValid: " + isValid)
-  }, [isValid]);
 
   return (
     <div className="App">
