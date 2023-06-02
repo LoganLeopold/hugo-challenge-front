@@ -24,6 +24,7 @@ const Field = ({ docType, documentId, keyValue, fieldLengths, validation, update
 
   useEffect(()=>{
     if (errors && errors.length > 0) {
+      // console.log("field useEffect > 0 errors")
       updateDocumentErrors(key, errors.length)
     }
   }, [errors])

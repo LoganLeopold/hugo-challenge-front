@@ -20,16 +20,20 @@ const Customer = ({ customerObject, updateApplication, updateApplicationErrors }
     state: 75,
   }
 
-  useEffect(() => {
-    updateApplicationErrors('customer', errors)
-  }, [errors])
+  // useEffect(() => {
+  //   console.log(errors, "errors useEffect");
+  //   updateApplicationErrors('customer', errors)
+  // }, [errors]);
 
   const updateCustomerErrors = (field, count) => {
     if (errors && count != errors[field]) {
       setErrorObject((currErrors) => {
         if (currErrors) {
-          currErrors[field] = count;
-          return currErrors;
+          updateApplicationErrors('customer', currErrors)
+          return {
+            ...currErrors,
+            [field]: count
+          }
         }
       });
     }

@@ -38,34 +38,48 @@ const Application = () => {
   }
 
   const updateApplication = (docType, fieldUpdate, id) => {
-    // console.log("fieldUpdate", fieldUpdate)
     const [key, value] = Object.entries(fieldUpdate)[0]
-    if (docType ==="customer") {
-      setApplication((currApp) => {
-        currApp['customer'][key] = value
-        return currApp
+    if (docType === "customer") {
+      setApplication((currApp) => { 
+        return {
+          ...currApp,
+          customer: {
+            ...currApp.customer,
+            [key]: value,
+          }
+        }
       })
     } 
     else {
       setApplication((currApp) => {
-        currApp.vehicles[id][key] = value
-        return currApp;
+        return {
+          ...currApp,
+          vehicles: {
+            ...currApp.vehicles,
+            [id]: {
+              ...currApp.vehicles[id],
+              [key]: value
+            }
+          }
+        }
       })
     }
   }
 
   const updateApplicationErrors = (key, count) => {
-    if (errors[key] != count) {
-      setErrors((errorsObject) => {
-        errorsObject[key] = count   
-        return errorsObject;
-      })
-    }   
+    setErrors((errorsObject) => {
+      return {
+        ...errorsObject,
+        [key]: count
+      }
+    }) 
   }
 
-  // useEffect(() => {
-  //   console.log(application)
-  // }, [application])
+  
+
+  useEffect(() => {
+    console.log(errors)
+  }, [errors])
 
   return (
     <div className="App">

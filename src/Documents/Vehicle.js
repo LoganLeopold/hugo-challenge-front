@@ -6,7 +6,6 @@ const Vehicle = ({ vehicleObject, updateApplication, updateApplicationErrors }) 
   const [vehicleDoc, updateVehicle] = useState({})
   const [errors, setErrorObject] = useState({})
   
-  // establishing
   useEffect(()=>{
     updateVehicle(vehicleObject)
   }, [vehicleObject]);
@@ -26,8 +25,10 @@ const Vehicle = ({ vehicleObject, updateApplication, updateApplicationErrors }) 
     if (errors && count != errors[field]) {
       setErrorObject((currErrors) => {
         if (currErrors) {
-          currErrors[field] = count;
-          return currErrors;
+          return {
+            ...currErrors,
+            [field]: count
+          }
         }
       });
     }
