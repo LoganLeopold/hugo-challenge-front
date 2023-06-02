@@ -20,23 +20,22 @@ const Customer = ({ customerObject, updateApplication, updateApplicationErrors }
     state: 75,
   }
 
-  // useEffect(() => {
-  //   console.log(errors, "errors useEffect");
-  //   updateApplicationErrors('customer', errors)
-  // }, [errors]);
+  useEffect(() => {
+    updateApplicationErrors('customer', Object.keys(errors).length)
+  }, [errors])
 
   const updateCustomerErrors = (field, count) => {
-    if (errors && count != errors[field]) {
-      setErrorObject((currErrors) => {
-        if (currErrors) {
-          updateApplicationErrors('customer', currErrors)
-          return {
-            ...currErrors,
-            [field]: count
-          }
-        }
-      });
-    }
+    setErrorObject((errorsObject) => {
+      const newErrorObject = {
+        ...errorsObject
+      }
+      if (count === 0) { 
+        delete newErrorObject[field] 
+      } else {
+        newErrorObject[field] = count
+      }
+      return newErrorObject
+    });
   }
 
   return (

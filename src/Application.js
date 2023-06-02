@@ -32,11 +32,6 @@ const Application = () => {
     };
   }, []);
   
-  const submitApplication = async () => {
-    const res = await axios.post(`http://localhost:3001/application/submit`, {});
-    return res;
-  }
-
   const updateApplication = (docType, fieldUpdate, id) => {
     const [key, value] = Object.entries(fieldUpdate)[0]
     if (docType === "customer") {
@@ -67,19 +62,52 @@ const Application = () => {
   }
 
   const updateApplicationErrors = (key, count) => {
-    setErrors((errorsObject) => {
-      return {
-        ...errorsObject,
-        [key]: count
-      }
-    }) 
+    console.log("updateApplicationErrors causes error changes")
+    if (errors && errors[key] !== count) {
+      setErrors((errorsObject) => {
+        const newErrorObject = {
+          ...errorsObject
+        }
+        if (count === 0) { 
+          delete newErrorObject[key] 
+        } else {
+          newErrorObject[key] = count
+        }
+        return newErrorObject
+      }) 
+    }
   }
 
-  
+  const validateApplication = () => {
+    console.log("validateApp causes setIsValid")
+    let check = true;
+    if (errors) {
+      for (let i = 0; i < Object.keys(errors).length; i++) {
+        const [field, docErrors] = Object.entries(errors)[i];
+        if (docErrors > 0) {
+          check = false
+          return check;
+        }
+      }
+    }
+    console.log("test loop return", check);
+    return check;
+  }
+
+  const submitApplication = async () => {
+    const res = await axios.post(`http://localhost:3001/application/submit`, {});
+    return res;
+  }
 
   useEffect(() => {
-    console.log(errors)
+    console.log("errors useEffect causes validateApplication");
+    const check = validateApplication();
+    setIsValid(check);
   }, [errors])
+
+  useEffect(()=>{
+    console.log("isValid: " + isValid)
+  }, [isValid]);
 
   return (
     <div className="App">

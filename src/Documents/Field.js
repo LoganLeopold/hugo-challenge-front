@@ -23,8 +23,7 @@ const Field = ({ docType, documentId, keyValue, fieldLengths, validation, update
   }
 
   useEffect(()=>{
-    if (errors && errors.length > 0) {
-      // console.log("field useEffect > 0 errors")
+    if (errors) {
       updateDocumentErrors(key, errors.length)
     }
   }, [errors])
@@ -51,14 +50,14 @@ const Field = ({ docType, documentId, keyValue, fieldLengths, validation, update
   } 
 
   const clickEvent = async (e) => {
-    const sendError = "*** NOT SUBMITTED *** either errors on field or data is the same.";
+    const sendError = "*** NOT SUBMITTED *** Errors on the field.";
     if (errors.length <= 0 && fieldValue != dbMock) {
       const res = await sendUpdate({[key]: fieldValue});
       if (res.data) {
         setDbMock(Object.values(res.data)[0]);
         updateApplication(docType, res.data, documentId);
       }
-    } else {
+    } else if (fieldValue != dbMock) {
       setErrors((currErrors) => {
         if (!currErrors.includes(sendError)) currErrors.push(sendError);
         return currErrors;

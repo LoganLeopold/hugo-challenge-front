@@ -18,20 +18,21 @@ const Vehicle = ({ vehicleObject, updateApplication, updateApplicationErrors }) 
 
   useEffect(() => {
     const id = vehicleDoc.vin ? vehicleDoc.vin : vehicleObject.vin
-    updateApplicationErrors(`vehicle${id}`, errors)
-  }, [errors, vehicleDoc])
+    updateApplicationErrors(`vehicle${id}`, Object.keys(errors).length)
+  }, [errors])
 
   const updateVehicleErrors = (field, count) => {
-    if (errors && count != errors[field]) {
-      setErrorObject((currErrors) => {
-        if (currErrors) {
-          return {
-            ...currErrors,
-            [field]: count
-          }
-        }
-      });
-    }
+    setErrorObject((errorsObject) => {
+      const newErrorObject = {
+        ...errorsObject
+      }
+      if (count === 0) { 
+        delete newErrorObject[field] 
+      } else {
+        newErrorObject[field] = count
+      }
+      return newErrorObject
+    });
   }
 
   return (
