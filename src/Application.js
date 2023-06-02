@@ -4,7 +4,6 @@ import './App.css';
 import axios from 'axios'
 import Customer from './Documents/Customer.js';
 import Vehicle from './Documents/Vehicle';
-import NewVehicle from './NewVehicle';
 
 const Application = () => {
 
@@ -24,6 +23,9 @@ const Application = () => {
     }
   }
 
+  useEffect(()=>{
+    console.log(Object.keys(application.vehicles).length >= 3)
+  }, [application])
   const hasLoaded = useRef(false);
 
   useEffect(() => {
@@ -70,6 +72,38 @@ const Application = () => {
       delete newApp.vehicles[vin]
       return newApp;
     })
+  }
+
+  const addNewVehicle = async () => {
+    const currentApplication = application.application
+    const currentCustomer = application.customer
+    const thisNewVehicle = `placeholder::${new Date().getTime()}`
+    const res = await axios.post(`${process.env.REACT_APP_LOCAL_API_BASE_URL}/vehicle/new`, {
+      vehicle: {
+        vin: thisNewVehicle,
+        year: 0,
+        make: '',
+        model: ''
+      },
+      customer: currentCustomer.customer,
+      application: currentApplication
+    })
+    if (Object.keys(res.data.vin).length > 0) {
+      setApplication((currApp) => {
+        return {
+          ...currApp,
+          vehicles: {
+            ...currApp.vehicles,
+            [thisNewVehicle]: {
+              vin: thisNewVehicle,
+              year: 0,
+              make: '',
+              model: '',
+            }
+          }
+        }
+      })
+    }
   }
 
   const updateApplicationErrors = (key, count) => {
@@ -148,7 +182,10 @@ const Application = () => {
             />
           </React.Fragment>
         )}
-        {/* {Object.keys(application.vehicles).length > 3 && <NewVehicle application={application}/>} */}
+        {
+          (Object.keys(application.vehicles).length < 3) && 
+            <button id={'addNewVehicle'} onClick={addNewVehicle}>Add New Vehicle</button>
+        }
       </div>
       <div className='submit-price'>
         {<button onClick={submitApplication} disabled={!isValid}>Submit Application{!isValid && <span>Fix errors on form!</span>}</button>}
