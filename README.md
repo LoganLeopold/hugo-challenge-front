@@ -10,10 +10,9 @@ When I was being audacious at the outset of this project and thinking I'd have t
 
 1. Create a .env file in the root of the project.
 
-2. "Drop REACT_APP_LOCAL_API_BASE_URL = 'http://127.0.0.1:3001'" into the file and save it. 
+2. Drop REACT_APP_LOCAL_API_BASE_URL='http://127.0.0.1:3001' into the file and save it. This is where the backend runs locally by default.
 
 3. You need to run npm start again to use the variable.
-
 
 ## Available Scripts 
 
